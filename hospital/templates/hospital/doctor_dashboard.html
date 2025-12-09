@@ -1,0 +1,48 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}Doctor Dashboard - {{ doctor.name }}{% endblock %}
+
+{% block content %}
+  <h2>Doctor Dashboard</h2>
+  <p>Welcome, {{ doctor.name }} — Specialization: {{ doctor.specialization }}</p>
+
+  <section style="margin-top:12px;">
+    <h3>Create Prescription</h3>
+    <div class="form-backdrop">
+      <div class="form-card">
+        <form method="post" action="{% url 'doctor_dashboard' %}">
+          {% csrf_token %}
+          <div class="form-grid">
+            {% for field in form %}
+              <div class="field">
+                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+              </div>
+            {% endfor %}
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create Prescription</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-top:18px;">
+    <h3>Your Recent Prescriptions</h3>
+    {% if prescriptions %}
+      <ul>
+        {% for p in prescriptions %}
+          <li>
+            <strong>{{ p.patient.name }}</strong> — {{ p.medication|truncatechars:100 }}
+            <div style="font-size:0.9em;color:#555;">{{ p.created_at }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No prescriptions yet.</p>
+    {% endif %}
+  </section>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'hospital/base.html' %}
+
+{% block title %}Patient Dashboard - {{ patient.name }}{% endblock %}
+
+{% block content %}
+  <h2>Patient Dashboard</h2>
+  <p>Welcome, {{ patient.name }}</p>
+
+  <section style="margin-top:12px;">
+    <h3>Your Prescriptions</h3>
+    {% if prescriptions %}
+      <ul>
+        {% for p in prescriptions %}
+          <li>
+            <strong>From:</strong> {{ p.doctor.name }} — <strong>Medication:</strong> {{ p.medication }}
+            <div style="font-size:0.9em;color:#555;">{{ p.created_at }}</div>
+            {% if p.notes %}
+              <div><em>Notes:</em> {{ p.notes }}</div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No prescriptions found.</p>
+    {% endif %}
+  </section>
+
+{% endblock %}

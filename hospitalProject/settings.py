@@ -23,8 +23,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hospital',
-    'graphene_django'
 ]
+
+# Optional Graphene app: include if installed to avoid import errors when
+# running outside the project's virtualenv.
+try:
+    import graphene_django  # type: ignore
+except Exception:
+    graphene_django = None
+
+if graphene_django:
+    INSTALLED_APPS.append('graphene_django')
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -41,7 +51,7 @@ ROOT_URLCONF = 'hospitalProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,9 +112,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Redirect after login to the dashboard redirect view
+LOGIN_REDIRECT_URL = '/dashboard/'
+LOGOUT_REDIRECT_URL = '/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

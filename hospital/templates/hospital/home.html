@@ -1,33 +1,67 @@
 {% extends 'hospital/base.html' %}
 
+{% load static %}
 
+{% block title %}Home - Hospital Management System{% endblock %}
 
 {% block content %}
     <div>
-        <h1>Featured Hospitals</h1>
-        {% for hospital in hospitals %}
-            <div class="hospital-card">
+    <h1>Featured Hospitals</h1>
+    <section style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+      <div style="flex:1;min-width:320px;border:1px dashed #ccc;padding:20px;border-radius:6px;text-align:center;">
+        <h3>Create Doctor Account</h3>
+        <p style="color:#555;margin-bottom:12px;">Register as a doctor to create prescriptions and manage patients for your hospital.</p>
+        <a href="{% url 'register_doctor' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#1976d2;color:#fff;border-radius:6px;text-decoration:none;">Go to Doctor Registration</a>
+      </div>
 
-                <h3><i class="fa fa-hospital cap"></i>
-                  {{ hospital.name }}
-                </h3>
+      <div style="flex:1;min-width:320px;border:1px dashed #ccc;padding:20px;border-radius:6px;text-align:center;">
+        <h3>Create Patient Account</h3>
+        <p style="color:#555;margin-bottom:12px;">Register as a patient to receive prescriptions and view them in your dashboard.</p>
+        <a href="{% url 'register_patient' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#388e3c;color:#fff;border-radius:6px;text-decoration:none;">Go to Patient Registration</a>
+      </div>
+    </section>
+    <div class="hospital-list">
+    {% for hospital in hospitals %}
+      <div class="hospital-card" style="border:1px solid #ddd;padding:12px;margin:10px;border-radius:6px;">
 
-                <p><i class="fas fa-home"></i> Location: {{ hospital.address }}</p>
+        <h3><i class="fa fa-hospital cap"></i>
+          {{ hospital.name }}
+        </h3>
 
-                <p><i class="fa fa-phone"></i> Contact:<a href="tel:{{ hospital.phone_number }}">  {{ hospital.phone_number }}</a></p>
-                
-                <div id="moreContent{{hospital.id}}" style="display: none;">
-                <p><i class="fa fa-envelope"></i>Email:<a href="mailto:{{hospital.email}}"> {{hospital.email}}</a></p>
+        <p><strong>Location:</strong> {{ hospital.address }}</p>
 
-                {% if hospital.website %}
-                <p><i class="fa fa-globe"></i> Website:<a href=""> {{hospital.website}}</a></p>
-                {% endif %}
+        <p><strong>Contact:</strong> <a href="tel:{{ hospital.phone_number }}">{{ hospital.phone_number }}</a>
+         &nbsp;|&nbsp; <strong>Email:</strong> <a href="mailto:{{ hospital.email }}">{{ hospital.email }}</a></p>
 
-                <p><i class="fa fa-bed"></i> Capacity : {{hospital.capacity}}</p>
-            </div>
-            <button onclick="showMore('{{hospital.id}}')">show more</button>
-            </div>
-        {% endfor %}
+        {% if hospital.website %}
+        <p><strong>Website:</strong> <a href="{{ hospital.website }}" target="_blank" rel="noopener">{{ hospital.website }}</a></p>
+        {% endif %}
+
+        <p><strong>Capacity:</strong>
+          <span style="font-weight:700;">{{ hospital.capacity }}</span>
+          {% if hospital.capacity < 50 %}
+            <span style="color: #b71c1c; margin-left:8px;">(Low capacity)</span>
+          {% elif hospital.capacity < 200 %}
+            <span style="color: #f57f17; margin-left:8px;">(Moderate)</span>
+          {% else %}
+            <span style="color: #2e7d32; margin-left:8px;">(High)</span>
+          {% endif %}
+        </p>
+
+        <div style="margin-top:8px;">
+          <a class="btn" href="{% url 'hospital_detail' hospital.id %}" style="padding:6px 10px;background:#1976d2;color:#fff;border-radius:4px;text-decoration:none;margin-right:8px;">View Details</a>
+          <a class="btn" href="tel:{{ hospital.phone_number }}" style="padding:6px 10px;background:#388e3c;color:#fff;border-radius:4px;text-decoration:none;margin-right:8px;">Call</a>
+          <a class="btn" href="mailto:{{ hospital.email }}" style="padding:6px 10px;background:#6a1b9a;color:#fff;border-radius:4px;text-decoration:none;">Email</a>
+          {% if request.user.is_staff %}
+            <a class="btn" href="/admin/hospital/hospital/{{ hospital.id }}/change/" style="padding:6px 10px;background:#455a64;color:#fff;border-radius:4px;text-decoration:none;margin-left:8px;">Admin Edit</a>
+          {% endif %}
+        </div>
+
+      </div>
+    {% empty %}
+      <p>No hospitals available yet. Add some via the admin panel.</p>
+    {% endfor %}
+    </div>
     </div>
 
     <script>
