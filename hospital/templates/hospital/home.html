@@ -9,15 +9,17 @@
     <h1>Featured Hospitals</h1>
     <section style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
       <div style="flex:1;min-width:320px;border:1px dashed #ccc;padding:20px;border-radius:6px;text-align:center;">
-        <h3>Create Doctor Account</h3>
+        <h3>Doctor Access</h3>
         <p style="color:#555;margin-bottom:12px;">Register as a doctor to create prescriptions and manage patients for your hospital.</p>
-        <a href="{% url 'register_doctor' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#1976d2;color:#fff;border-radius:6px;text-decoration:none;">Go to Doctor Registration</a>
+        <a href="{% url 'register_doctor' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#1976d2;color:#fff;border-radius:6px;text-decoration:none;margin-right:8px;">Create Account</a>
+        <a href="{% url 'login' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#388e3c;color:#fff;border-radius:6px;text-decoration:none;">Login</a>
       </div>
 
       <div style="flex:1;min-width:320px;border:1px dashed #ccc;padding:20px;border-radius:6px;text-align:center;">
-        <h3>Create Patient Account</h3>
+        <h3>Patient Access</h3>
         <p style="color:#555;margin-bottom:12px;">Register as a patient to receive prescriptions and view them in your dashboard.</p>
-        <a href="{% url 'register_patient' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#388e3c;color:#fff;border-radius:6px;text-decoration:none;">Go to Patient Registration</a>
+        <a href="{% url 'register_patient' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#388e3c;color:#fff;border-radius:6px;text-decoration:none;margin-right:8px;">Create Account</a>
+        <a href="{% url 'login' %}" class="btn" style="display:inline-block;padding:10px 16px;background:#1976d2;color:#fff;border-radius:6px;text-decoration:none;">Login</a>
       </div>
     </section>
     <div class="hospital-list">

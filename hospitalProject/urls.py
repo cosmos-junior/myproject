@@ -7,7 +7,6 @@ from django.contrib.auth.views import LogoutView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('hospital.urls')),
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),
     path('accounts/', include('django.contrib.auth.urls')),
 ]
 urlpatterns += staticfiles_urlpatterns()

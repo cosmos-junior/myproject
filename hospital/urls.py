@@ -23,6 +23,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard_redirect, name='dashboard'),
     path('profile/', views.profile_view, name='profile'),
     path('profile/edit/', views.profile_edit, name='profile_edit'),
+    path('logout/', views.custom_logout, name='custom_logout'),
+    path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
 ]
 
 if _graphql_available:

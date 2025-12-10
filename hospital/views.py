@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import logout
 from .models import Hospital, Doctor, Patient
 from .forms import (
     DoctorRegistrationForm,
@@ -101,10 +102,11 @@ def doctor_dashboard(request):
         messages.error(request, 'Access denied: not a doctor account.')
         return redirect('home')
 
-    # Provide a prescription form limited to patients of the same hospital
+    # Provide a prescription form - show patients from same hospital, or all patients if none in same hospital
     if request.method == 'POST':
         form = PrescriptionForm(request.POST)
-        form.fields['patient'].queryset = Patient.objects.filter(hospital=doctor.hospital)
+        hospital_patients = Patient.objects.filter(hospital=doctor.hospital)
+        form.fields['patient'].queryset = hospital_patients if hospital_patients.exists() else Patient.objects.all()
         if form.is_valid():
             prescription = form.save(commit=False)
             prescription.doctor = doctor
@@ -113,7 +115,8 @@ def doctor_dashboard(request):
             return redirect('doctor_dashboard')
     else:
         form = PrescriptionForm()
-        form.fields['patient'].queryset = Patient.objects.filter(hospital=doctor.hospital)
+        hospital_patients = Patient.objects.filter(hospital=doctor.hospital)
+        form.fields['patient'].queryset = hospital_patients if hospital_patients.exists() else Patient.objects.all()
 
     prescriptions = doctor.prescriptions.all()
     return render(request, 'hospital/doctor_dashboard.html', {'doctor': doctor, 'form': form, 'prescriptions': prescriptions})
@@ -185,5 +188,13 @@ def profile_edit(request):
         return render(request, 'hospital/edit_patient_profile.html', {'form': form})
 
     messages.error(request, 'No profile to edit.')
+    return redirect('home')
+
+
+def custom_logout(request):
+    """Custom logout view that redirects to home with personalized message."""
+    username = request.user.username if request.user.is_authenticated else 'User'
+    logout(request)
+    messages.success(request, f'Goodbye {username}! You have been successfully logged out.')
     return redirect('home')
 
