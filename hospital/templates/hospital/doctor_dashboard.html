@@ -30,6 +30,26 @@
   </section>
 
   <section style="margin-top:18px;">
+    <h3>Your Appointments</h3>
+    {% if appointments %}
+      <ul>
+        {% for a in appointments %}
+          <li style="margin-bottom:10px;padding:10px;border:1px solid #ddd;border-radius:4px;">
+            <strong>Patient:</strong> {{ a.patient.name }}<br>
+            <strong>Date & Time:</strong> {{ a.appointment_date }} at {{ a.appointment_time }}<br>
+            {% if a.message %}
+              <strong>Message:</strong> {{ a.message }}<br>
+            {% endif %}
+            <small style="color:#666;">Booked on: {{ a.created_at }}</small>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No appointments scheduled.</p>
+    {% endif %}
+  </section>
+
+  <section style="margin-top:18px;">
     <h3>Your Recent Prescriptions</h3>
     {% if prescriptions %}
       <ul>

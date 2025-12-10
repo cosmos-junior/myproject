@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Doctor, Patient, Prescription, Hospital
+from .models import Doctor, Patient, Prescription, Hospital, Appointment
 
 
 class DoctorForm(forms.ModelForm):
@@ -64,3 +64,20 @@ class PrescriptionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for fname, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control', 'aria-label': fname})
+
+
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['doctor', 'appointment_date', 'appointment_time', 'message']
+        widgets = {
+            'appointment_date': forms.DateInput(attrs={'type': 'date'}),
+            'appointment_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for fname, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control', 'aria-label': fname})
+        self.fields['doctor'].queryset = Doctor.objects.all()
+        self.fields['message'].widget.attrs.update({'placeholder': 'Reason for appointment (optional)'})

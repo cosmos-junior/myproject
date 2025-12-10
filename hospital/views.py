@@ -3,11 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
-from .models import Hospital, Doctor, Patient
+from .models import Hospital, Doctor, Patient, Appointment
 from .forms import (
     DoctorRegistrationForm,
     PatientRegistrationForm,
     PrescriptionForm,
+    AppointmentForm,
 )
 from .forms import DoctorForm, PatientForm
 
@@ -119,7 +120,13 @@ def doctor_dashboard(request):
         form.fields['patient'].queryset = hospital_patients if hospital_patients.exists() else Patient.objects.all()
 
     prescriptions = doctor.prescriptions.all()
-    return render(request, 'hospital/doctor_dashboard.html', {'doctor': doctor, 'form': form, 'prescriptions': prescriptions})
+    appointments = doctor.appointments.all()
+    return render(request, 'hospital/doctor_dashboard.html', {
+        'doctor': doctor, 
+        'form': form, 
+        'prescriptions': prescriptions,
+        'appointments': appointments
+    })
 
 
 @login_required
@@ -130,8 +137,25 @@ def patient_dashboard(request):
         messages.error(request, 'Access denied: not a patient account.')
         return redirect('home')
 
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.patient = patient
+            appointment.save()
+            messages.success(request, f'Appointment booked with Dr. {appointment.doctor.name} on {appointment.appointment_date} at {appointment.appointment_time}')
+            return redirect('patient_dashboard')
+    else:
+        form = AppointmentForm()
+
     prescriptions = patient.prescriptions.all()
-    return render(request, 'hospital/patient_dashboard.html', {'patient': patient, 'prescriptions': prescriptions})
+    appointments = patient.appointments.all()
+    return render(request, 'hospital/patient_dashboard.html', {
+        'patient': patient, 
+        'prescriptions': prescriptions, 
+        'appointments': appointments,
+        'appointment_form': form
+    })
 
 
 @login_required

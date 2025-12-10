@@ -63,3 +63,18 @@ class Prescription(models.Model):
 
     def __str__(self):
         return f"Prescription for {self.patient.name} by {self.doctor.name}"
+
+
+class Appointment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments')
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='appointments')
+    appointment_date = models.DateField()
+    appointment_time = models.TimeField()
+    message = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('appointment_date', 'appointment_time')
+
+    def __str__(self):
+        return f"Appointment: {self.patient.name} with {self.doctor.name} on {self.appointment_date}"
